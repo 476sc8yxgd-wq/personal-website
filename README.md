@@ -12,12 +12,13 @@
 
 ## 功能特性
 
-- **个人介绍**: 展示个人基本信息、教育背景和职业经历
-- **博客系统**: 发布和管理博客文章，支持分类浏览和标签
-- **互动问答**: 用户可以提问、点赞和博主回答
+- **个人介绍**: 展示个人基本信息、座右铭，以及最新博客预览
+- **博客系统**: 发布和管理博客文章，支持分类浏览、标签和封面图
+- **互动问答**: 用户可以匿名提问、点赞和博主回答
 - **用户认证**: 基于Supabase的用户登录系统
-- **管理后台**: 管理员可以管理博客、分类和问答
-- **性能优化**: 代码分割、懒加载、缓存策略
+- **管理后台**: 管理员可以管理博客、分类、标签和问答
+- **性能优化**: 多级缓存策略、代码分割、懒加载
+- **视觉主题**: 玄夜樱流主题，樱花粉+夜色黑配色，玻璃态设计
 
 ## 快速开始
 
@@ -107,6 +108,13 @@ docker-compose down
 
 ## 环境变量配置
 
+### 前端环境变量 (frontend/.env)
+
+```env
+VITE_SUPABASE_URL=https://your-project.supabase.co
+VITE_SUPABASE_ANON_KEY=your_anon_key
+```
+
 ### 后端环境变量 (.env)
 
 ```env
@@ -114,12 +122,14 @@ docker-compose down
 PORT=3000
 NODE_ENV=production
 
-# 数据库配置
-MYSQL_HOST=mysql
-MYSQL_PORT=3306
-MYSQL_USER=root
-MYSQL_PASSWORD=rootpassword
-MYSQL_DATABASE=personal_website
+# Supabase配置
+SUPABASE_URL=https://your-project.supabase.co
+SUPABASE_ANON_KEY=your_anon_key
+SUPABASE_SERVICE_KEY=your_service_key
+
+# JWT配置
+JWT_SECRET=your_jwt_secret_key_here
+JWT_EXPIRES_IN=7d
 ```
 
 ## 项目结构
@@ -150,14 +160,16 @@ MYSQL_DATABASE=personal_website
 
 ## 数据库结构
 
-项目使用MySQL作为数据库，包含以下表:
+项目使用Supabase PostgreSQL数据库，包含以下表:
 
-- `profile`: 个人信息表
+- `profiles`: 个人信息表
 - `blogs`: 博客文章表
 - `categories`: 博客分类表
 - `qa`: 问答表
+- `tags`: 标签表
+- `blog_tags`: 博客标签关联表
 
-数据库结构文件位于 `backend/src/config/schema.sql`。
+所有表均已配置RLS（行级安全）策略。
 
 ## 常用命令
 
@@ -177,6 +189,11 @@ docker-compose exec app sh
 # 进入数据库容器
 docker-compose exec mysql mysql -u root -p
 ```
+
+## 相关文档
+
+- **产品需求文档**: [个人网站PRD文档.md](个人网站PRD文档.md) - 完整的产品需求、设计风格和验收标准
+- **部署指南**: [DEPLOYMENT_GUIDE.md](DEPLOYMENT_GUIDE.md) - 详细的部署步骤和配置说明
 
 ## 腾讯云Lighthouse部署
 
