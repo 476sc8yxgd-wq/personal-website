@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: personal_website_backend
+    restart: unless-stopped
+    ports:
+      - "3001:3001"
+    environment:
+      - NODE_ENV=production
+      - PORT=3001
+      # Supabase配置
+      - SUPABASE_URL=https://assfhuxuglbootvpigeu.supabase.co
+      - SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFzc2ZodXh1Z2xib290dnBpZ2V1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYzOTIzNjUsImV4cCI6MjA4MTk2ODM2NX0.bTWc11pGIvy9Fz5O_9Gch3ZJEVP2pdKlTT5N79gcWCA
+      # JWT配置
+      - JWT_SECRET=your_jwt_secret_key_here_please_change_this
+      - JWT_EXPIRES_IN=7d
+    volumes:
+      - ./public:/app/public
+    networks:
+      - backend-network
+
+networks:
+  backend-network:
+    driver: bridge

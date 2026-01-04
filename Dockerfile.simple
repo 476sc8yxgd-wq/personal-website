@@ -1,0 +1,52 @@
+# 使用Node.js 18 Alpine镜像
+FROM node:18-alpine
+
+# 设置工作目录
+WORKDIR /app
+
+# 安装系统工具
+RUN apk add --no-cache \
+    python3 \
+    make \
+    g++ \
+    curl \
+    && rm -rf /var/cache/apk/*
+
+# 复制整个项目（包含前端和后端）
+COPY . .
+
+# 安装前端依赖
+WORKDIR /app/frontend
+RUN npm install
+
+# 构建前端
+RUN npm run build
+
+# 返回根目录
+WORKDIR /app
+
+# 安装后端依赖
+RUN npm install
+
+# 构建后端
+RUN npm run build
+
+# 安装后端生产依赖
+RUN npm install --omit=dev
+
+# 复制前端构建结果到后端public目录
+RUN cp -r frontend/dist backend/public
+
+# 暴露端口
+EXPOSE 5000
+
+# 设置环境变量
+ENV NODE_ENV=production
+ENV PORT=5000
+
+# 健康检查
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+    CMD curl -f http://localhost:5000/api/health || exit 1
+
+# 启动应用
+CMD ["cd", "backend", "&&", "npm", "start"]
